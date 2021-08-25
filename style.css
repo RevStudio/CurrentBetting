@@ -1,0 +1,4 @@
+h1{text-align:center;}
+.cnt-row{display:table; width:100%; margin-bottom:25px; table-layout: fixed;}
+.cnt-row > div{display:table-cell; text-align:center; padding:5px; border: 1px solid #ddd;}
+.cnt-row .sub-title{background-color:slateblue; color:#fff; font-weight: bold;}

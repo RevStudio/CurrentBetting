@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <div class="body">
+      <h1>현재 베팅 정보</h1>
+
+      <div class="bat_data">
+        <div id="cnt1" class="cnt-row">
+          <div class="left_cnt">0</div>
+          <div class="left_per">0%</div>
+          <div class="sub-title">배팅1</div>
+          <div class="right_per">0%</div>
+          <div class="right_cnt">0</div>
+        </div>
+        <div id="cnt2" class="cnt-row">
+          <div class="left_cnt">0</div>
+          <div class="left_per">0%</div>
+          <div class="sub-title">배팅2</div>
+          <div class="right_per">0%</div>
+          <div class="right_cnt">0</div>
+        </div>
+        <div id="cnt3" class="cnt-row">
+          <div class="left_cnt">0</div>
+          <div class="left_per">0%</div>
+          <div class="sub-title">배팅3</div>
+          <div class="right_per">0%</div>
+          <div class="right_cnt">0</div>
+        </div>
+        <div id="cnt4" class="cnt-row">
+          <div class="left_cnt">0</div>
+          <div class="left_per">0%</div>
+          <div class="sub-title">배팅4</div>
+          <div class="right_per">0%</div>
+          <div class="right_cnt">0</div>
+        </div>
+        <div id="total_cnt" class="cnt-row">
+          <div class="left_cnt">0</div>
+          <div class="left_per"></div>
+          <div class="sub-title">배팅 총합</div>
+          <div class="right_per"></div>
+          <div class="right_cnt">0</div>
+        </div>
+      </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>
+      function numberFormat( getNum )
+      {
+        let rNum = (getNum/1).toFixed(0).replace('.', ',');
+        return rNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      function print_bat(failed){
+        var left_cnt = [0,0,0,0];
+        var right_cnt = [0,0,0,0];
+        var left_total_cnt = [0,0,0,0];
+        var right_total_cnt = [0,0,0,0];
+        // console.log(turn,failed);
+        
+        for(var i = 0; i < failed.length; i++){
+          switch(failed[i].select1){
+            case 0: left_cnt[0] += Number(failed[i].cnt1); left_total_cnt[0]++;
+              break;
+            case 1: right_cnt[0] += Number(failed[i].cnt1); right_total_cnt[0]++;
+              break;
+            default: break;
+          }
+
+          switch(failed[i].select2){
+            case 0: left_cnt[1] += Number(failed[i].cnt2); left_total_cnt[1]++;
+              break;
+            case 1: right_cnt[1] += Number(failed[i].cnt2); right_total_cnt[1]++;
+              break;
+            default: break;
+          }
+
+          switch(failed[i].select3){
+            case 0: left_cnt[2] += Number(failed[i].cnt3); left_total_cnt[2]++;
+              break;
+            case 1: right_cnt[2] += Number(failed[i].cnt3); right_total_cnt[2]++;
+              break;
+            default: break;
+          }
+
+          switch(failed[i].select4){
+            case 0: left_cnt[3] += Number(failed[i].cnt4); left_total_cnt[3]++;
+              break;
+            case 1: right_cnt[3] += Number(failed[i].cnt4); right_total_cnt[3]++;
+              break;
+            default: break;
+          }
+        }
+        
+        for(var i =0; i <4; i++){
+          //left cnt
+          var l_cnt = numberFormat(left_cnt[i]);
+          var l_per = "0%";
+          
+          if(left_total_cnt[i] == 0) l_per = "0%";
+          else if(right_total_cnt[i] == 0) l_per = "100%";
+          else l_per = Math.round((left_total_cnt[i] / (left_total_cnt[i] + right_total_cnt[i])*100),2) + "%";
+
+          $("#cnt"+(i + 1)+" .left_cnt").html(l_cnt);
+          $("#cnt"+(i + 1)+" .left_per").html(l_per);
+
+          //right cnt
+          var r_cnt = numberFormat(right_cnt[i]);
+          var r_per = "0%";
+
+          if(right_total_cnt[i] == 0) r_per = "0%";
+          else if(left_total_cnt[i] == 0) r_per = "100%";
+          else r_per = Math.round((right_total_cnt[i] / (left_total_cnt[i] + right_total_cnt[i])*100),2) + "%";
+
+          $("#cnt"+(i + 1)+" .right_cnt").html(r_cnt);
+          $("#cnt"+(i + 1)+" .right_per").html(r_per);
+        }
+
+        $("#total_cnt .left_cnt").html(numberFormat(arr_sum(left_cnt)));
+        $("#total_cnt .right_cnt").html(numberFormat(arr_sum(right_cnt)));
+      }
+
+      function arr_sum(arr){
+        var res = 0;
+        for(var i =0; i<arr.length; i++){
+          res += Number(arr[i]);
+        }
+
+        return res;
+      }
+      
+      function get_data(){
+        //시간구하기
+        // var cur = new Date("2021/08/25 21:34:59");
+        var cur = new Date();
+        
+        var year = cur.getFullYear().toString().slice(-2);
+        var month = (cur.getMonth() + 1).toString();
+        month = (month.length == 1) ? "0"+month : month;
+        var date = cur.getDate().toString();
+
+        var hours = cur.getHours().toString();
+        var minutes = cur.getMinutes().toString();
+        
+        if(minutes.length >= 2){
+          minutes = (minutes.slice(-1) <= 4) ? minutes.substring(0,1) + 4 : minutes.substring(0,1) + 9;
+        }else{
+          minutes = (minutes.substring(0,1) <= 4) ? "0" + 4 : "0" + 9;
+        }
+        
+        var turn = year + month + date + hours + minutes;
+
+        $.ajax({
+          url:"https://www.kndigames.com/getCurrentBet",
+          method:"POST",
+          data : {
+            turn : turn
+          },
+          dataType:"JSON",
+          success : function(json){
+            if(json.code == 200){
+              if(!json.data)  return false;
+              var failed = json.data.failed;
+
+              print_bat(failed);
+            }
+          }
+        })
+      }
+      setInterval(get_data,1000);
+        
+    </script>
+
+    
+  </body>
+</html>
