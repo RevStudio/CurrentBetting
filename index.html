@@ -63,7 +63,7 @@
         var left_total_cnt = [0,0,0,0];
         var right_total_cnt = [0,0,0,0];
         // console.log(turn,failed);
-        
+        console.log("fail Data : " + failed);
         for(var i = 0; i < failed.length; i++){
           switch(failed[i].select1){
             case 0: left_cnt[0] += Number(failed[i].cnt1); left_total_cnt[0]++;
@@ -97,12 +97,12 @@
             default: break;
           }
         }
-        
+
         for(var i =0; i <4; i++){
           //left cnt
           var l_cnt = numberFormat(left_cnt[i]);
           var l_per = "0%";
-          
+
           if(left_total_cnt[i] == 0) l_per = "0%";
           else if(right_total_cnt[i] == 0) l_per = "100%";
           else l_per = Math.round((left_total_cnt[i] / (left_total_cnt[i] + right_total_cnt[i])*100),2) + "%";
@@ -134,28 +134,33 @@
 
         return res;
       }
-      
+
       function get_data(){
         //시간구하기
         // var cur = new Date("2021/08/25 21:34:59");
         var cur = new Date();
-        
+
         var year = cur.getFullYear().toString().slice(-2);
         var month = (cur.getMonth() + 1).toString();
         month = (month.length == 1) ? "0"+month : month;
+
         var date = cur.getDate().toString();
+        date = (date.length == 1) ? "0"+date : date;
 
         var hours = cur.getHours().toString();
+        hours = (hours.length == 1) ? "0"+hours : hours;
+
+
         var minutes = cur.getMinutes().toString();
-        
+
         if(minutes.length >= 2){
           minutes = (minutes.slice(-1) <= 4) ? minutes.substring(0,1) + 4 : minutes.substring(0,1) + 9;
         }else{
           minutes = (minutes.substring(0,1) <= 4) ? "0" + 4 : "0" + 9;
         }
-        
-        var turn = year + month + date + hours + minutes;
 
+        var turn = year + month + date + hours + minutes;
+        console.log("turn : " + turn);
         $.ajax({
           url:"https://www.kndigames.com/getCurrentBet",
           method:"POST",
@@ -174,9 +179,9 @@
         })
       }
       setInterval(get_data,1000);
-        
+
     </script>
 
-    
+
   </body>
 </html>
